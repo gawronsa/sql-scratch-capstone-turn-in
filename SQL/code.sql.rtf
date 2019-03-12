@@ -1,0 +1,68 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red0\green0\blue0;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c1\c1;\cssrgb\c0\c0\c0;\cssrgb\c0\c1\c1;
+}
+\margl1440\margr1440\vieww26700\viewh13640\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 1.\
+ SELECT *\
+ FROM survey\
+ LIMIT 10;\
+\
+2.\
+\pard\pardeftab720\sl360\partightenfactor0
+\cf2 \expnd0\expndtw0\kerning0
+SELECT question, COUNT(DISTINCT user_id)\
+FROM survey\
+GROUP BY question;\cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf2 \
+3.\
+\pard\pardeftab720\sl360\partightenfactor0
+\cf4 \expnd0\expndtw0\kerning0
+SELECT question, COUNT(DISTINCT user_id)\
+FROM survey\
+GROUP BY question;\
+\
+SELECT COUNT(user_id)\
+FROM survey;\
+\
+4.\
+SELECT *\
+FROM quiz\
+LIMIT 5;\
+\
+SELECT *\
+FROM home_try_on\
+LIMIT 5;\
+\
+SELECT *\
+FROM purchase\
+LIMIT 5;\
+\
+5.\
+SELECT DISTINCT quiz.user_id, home_try_on.user_id IS NOT NULL AS 'is_home_try_on', home_try_on.number_of_pairs, purchase.user_id IS NOT NULL AS 'is_purchase'\
+FROM quiz\
+LEFT JOIN home_try_on\
+	ON	quiz.user_id = home_try_on.user_id\
+LEFT JOIN purchase\
+	ON purchase.user_id = quiz.user_id\
+LIMIT 10;\
+\
+6.\
+\cf3 WITH funnel AS(\
+SELECT DISTINCT quiz.user_id, home_try_on.user_id IS NOT NULL AS 'is_home_try_on', home_try_on.number_of_pairs, purchase.user_id IS NOT NULL AS 'is_purchase'\
+FROM quiz\
+LEFT JOIN home_try_on\
+\'a0 ON\'a0 quiz.user_id = home_try_on.user_id\
+LEFT JOIN purchase\
+\'a0 ON purchase.user_id = quiz.user_id\
+)\
+\
+SELECT COUNT(*) AS 'total_browse', SUM(is_home_try_on) AS 'total_try_on', SUM(is_purchase) AS 'purchase', 1.0 * SUM(is_home_try_on) / COUNT(user_id) AS 'total_try_on:total_user', 1.0 * SUM(is_purchase) / SUM(is_home_try_on) AS 'total_purchase:total_try_on'\
+FROM funnel;
+\f1 \
+}
